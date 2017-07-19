@@ -1,0 +1,40 @@
+<project name="subscriber-list-service" xmlns:ivy="antlib:org.apache.ivy.ant" basedir="." >
+  <property name="build.dir" value="${basedir}/.build"/>
+  <property name="distr.dir" value="${basedir}/.build/distr"/>
+  <property name="test.dir" value=".${basedir}/build/test"/>
+  <property name="release.version" value="dev"/>
+
+  <property name="model.classes.dir" value="${build.dir}/classes/model"/>
+  <property name="model.test.classes.dir" value="${test.dir}/model/classes"/>
+
+  <path id="model.compile.classpath">
+    <fileset dir="model/lib" includes="*.jar"/>
+    <fileset dir="model/libdev" includes="*.jar"/>
+  </path>
+  <path id="model.test.classpath">
+    <path refid="model.compile.classpath"/>
+    <path path="${model.classes.dir}"/>
+  </path>
+
+  <path id="model.lib">
+    <fileset dir="model/lib" includes="*.jar"/>
+  </path>
+  <path id="model.libdev">
+    <fileset dir="model/libdev" includes="*.jar"/>
+  </path>
+
+  <target name="retrieve">
+    <delete dir="model/lib" failonerror="false"/>
+    <delete dir="model/libdev" failonerror="false"/>
+
+    <mkdir dir="model/lib"/>
+    <mkdir dir="model/libdev"/>
+
+    <ivy:settings file="${user.home}/.ivy2/ivysettings.xml"/>
+    <ivy:resolve file="ivy.xml"/>
+    <ivy:retrieve type="jar,bundle" pattern="model/lib/[artifact]-[revision].[ext]" conf="model-prod" haltonfailure="true"/>
+    <ivy:retrieve type="jar,bundle" pattern="model/libdev/[artifact]-[revision].[ext]" conf="model-dev" haltonfailure="true"/>
+
+  </target>
+
+</project>

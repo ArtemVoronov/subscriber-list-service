@@ -1,0 +1,22 @@
+<ivy-module version="2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"
+            xmlns:m="http://ant.apache.org/ivy/maven.xsd">
+  <info organisation="org.unknown" module="subscriber-list-service"/>
+
+  <configurations>
+    <conf name="model-prod" description="For prod"/>
+    <conf name="model-dev" description="For dev"/>
+  </configurations>
+
+  <dependencies>
+
+    <!-- ================================================== MODEL ================================================== -->
+
+    <!-- Apache Ignite -->
+    <dependency org="org.apache.ignite" name="ignite-core" rev="2.0.0" conf="model-prod->default"/>
+    <dependency org="org.apache.ignite" name="ignite-hibernate" rev="1.0.0" conf="model-prod->default"/>
+
+  </dependencies>
+
+</ivy-module>
