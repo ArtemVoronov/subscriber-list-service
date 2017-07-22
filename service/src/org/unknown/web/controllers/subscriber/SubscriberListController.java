@@ -2,6 +2,8 @@ package org.unknown.web.controllers.subscriber;
 
 import groovy.transform.CompileStatic;
 import groovy.util.logging.Log4j;
+import org.unknown.model.Cell;
+import org.unknown.services.Service;
 import org.unknown.services.db.DBService;
 import org.unknown.web.controllers.subscriber.model.SubscriberProfile;
 
@@ -24,7 +26,7 @@ import javax.ws.rs.core.SecurityContext;
 @Log4j("logger")
 public class SubscriberListController {
 
-  @Inject
+  @Inject @Service
   private DBService db;
 
   @GET
@@ -39,25 +41,24 @@ public class SubscriberListController {
     }
   }
 
-  //TODO: clean
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("/get")
-  public String get(@QueryParam("key") Integer key,  @Context SecurityContext ctx) {
-    try{
-      return db.getCacheItem(key);
+  @Path("/cell")
+  public Cell getCell(@QueryParam("cellId") Integer cellId, @Context SecurityContext ctx) {
+    try {
+      //TODO
+      return db.getCell(cellId);
     } catch (Exception ignored) {
       throw new WebApplicationException(Response.status(Response.Status.BAD_GATEWAY).type(MediaType.TEXT_PLAIN_TYPE).entity("UNKNOWN").build());
     }
   }
 
-  //TODO: clean
   @POST
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/put")
-  public void put(@QueryParam("key") Integer key, @QueryParam("value") String value,  @Context SecurityContext ctx) {
+  @Path("/cell")
+  public void addCell(@FormParam("cellId") Integer cellId, @Context SecurityContext ctx) {
     try {
-      db.addCacheItem(key, value);
+      //TODO
+      db.addCell(new Cell(cellId));
     } catch (Exception ignored) {
       throw new WebApplicationException(Response.status(Response.Status.BAD_GATEWAY).type(MediaType.TEXT_PLAIN_TYPE).entity("UNKNOWN").build());
     }

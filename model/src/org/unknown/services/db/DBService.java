@@ -5,35 +5,71 @@ import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.configuration.CacheConfiguration;
+import org.apache.ignite.transactions.Transaction;
+import org.unknown.model.Cell;
+import org.unknown.model.Msisdn;
+import org.unknown.model.Profile;
+
+import java.util.Set;
 
 /**
  * Author: Artem Voronov
  */
 public class DBService {
 
-  //TODO: clean and add cached for model entities
-  private static final String CACHE_NAME = "Democache";
-  private final IgniteCache<Integer, String> cache;
+  private final IgniteCache<Integer, Cell> cells;
+  private final IgniteCache<Cell, Set<Msisdn>> msisdns;
+  private final IgniteCache<Msisdn, Profile> profiles;
 
   public DBService() {
     Ignite ignite = Ignition.start("org/unknown/services/db/example-ignite.xml");
 
-    CacheConfiguration<Integer, String> cfg = new CacheConfiguration<>();
-    cfg.setName(CACHE_NAME);
-    cfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+    //TODO: отделить кэши от службы; getCell, addCell убрать в другое место
+    CacheConfiguration<Integer, Cell> cellsCacheConfig = new CacheConfiguration<>("CELLS");
+    CacheConfiguration<Cell, Set<Msisdn>> phonesCacheConfig = new CacheConfiguration<>("MSISDNS");
+    CacheConfiguration<Msisdn, Profile> profilesCacheConfig = new CacheConfiguration<>("PROFILES");
 
-    cache = ignite.getOrCreateCache(cfg);
+    cellsCacheConfig.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+    phonesCacheConfig.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+    profilesCacheConfig.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+
+    cells = ignite.getOrCreateCache(cellsCacheConfig);
+    msisdns = ignite.getOrCreateCache(phonesCacheConfig);
+    profiles = ignite.getOrCreateCache(profilesCacheConfig);
   }
 
-  public void addCacheItem(Integer key, String value) {
-    cache.put(key, value);
+  public <T> T tx(DBAction<T> action) {
+    T value = null;
+    try (Transaction tx = Ignition.ignite().transactions().txStart()) {
+      value = action.action();
+      tx.commit();
+    }
+    return value;
   }
 
-  public String getCacheItem(Integer key) {
-    return cache.get(key);
+  public void vtx(DBVoidAction action) {
+    try (Transaction tx = Ignition.ignite().transactions().txStart()) {
+      action.action();
+      tx.commit();
+    }
+  }
+
+  public Cell getCell(Integer cellId) {
+    return tx(() -> cells.get(cellId));
+  }
+  public void addCell(Cell cell) {
+    vtx(() -> cells.put(cell.getCellId(), cell));
   }
 
   public void shutdown() {
     Ignition.stopAll(false);
+  }
+
+  public interface DBAction<T> {
+    T action();
+  }
+
+  public interface DBVoidAction {
+    void action();
   }
 }

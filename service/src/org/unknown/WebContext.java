@@ -1,6 +1,7 @@
 package org.unknown;
 
 import org.apache.commons.configuration2.Configuration;
+import org.unknown.services.Service;
 import org.unknown.services.Services;
 import org.unknown.services.db.DBService;
 
@@ -32,7 +33,7 @@ public class WebContext {
     return services;
   }
 
-  @Produces
+  @Produces @Service
   public DBService getDBService() {
     return services.getDbService();
   }
