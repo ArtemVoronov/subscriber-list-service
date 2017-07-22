@@ -23,17 +23,33 @@
     <fileset dir="model/libdev" includes="*.jar"/>
   </path>
 
+  <path id="service.lib">
+    <fileset dir="service/lib" includes="*.jar"/>
+    <fileset dir="model/lib" includes="*.jar"/>
+  </path>
+  <path id="service.libdev">
+    <fileset dir="service/libdev" includes="*.jar"/>
+    <fileset dir="model/libdev" includes="*.jar"/>
+  </path>
+
   <target name="retrieve">
     <delete dir="model/lib" failonerror="false"/>
     <delete dir="model/libdev" failonerror="false"/>
+    <delete dir="service/lib" failonerror="false"/>
+    <delete dir="service/libdev" failonerror="false"/>
 
     <mkdir dir="model/lib"/>
     <mkdir dir="model/libdev"/>
+    <mkdir dir="service/lib"/>
+    <mkdir dir="service/libdev"/>
 
     <ivy:settings file="${user.home}/.ivy2/ivysettings.xml"/>
     <ivy:resolve file="ivy.xml"/>
     <ivy:retrieve type="jar,bundle" pattern="model/lib/[artifact]-[revision].[ext]" conf="model-prod" haltonfailure="true"/>
     <ivy:retrieve type="jar,bundle" pattern="model/libdev/[artifact]-[revision].[ext]" conf="model-dev" haltonfailure="true"/>
+
+    <ivy:retrieve type="jar,bundle" pattern="service/lib/[artifact]-[revision].[ext]" conf="service-prod" haltonfailure="true"/>
+    <ivy:retrieve type="jar,bundle" pattern="service/libdev/[artifact]-[revision].[ext]" conf="service-dev" haltonfailure="true"/>
 
   </target>
 

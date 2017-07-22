@@ -3,35 +3,38 @@ package org.unknown.services.db;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.cache.CacheAtomicityMode;
+import org.apache.ignite.configuration.CacheConfiguration;
 
 /**
  * Author: Artem Voronov
  */
 public class DBService {
 
+  //TODO: clean
   public static void main(String[] args) {
-    //TODO
-    Ignite ignite = Ignition.ignite();
+    Ignition.setClientMode(true);
 
-    // Get an instance of named cache.
-    final IgniteCache<Integer, String> cache = ignite.cache("cacheName");
+    try(Ignite ignite = Ignition.start("org/unknown/services/db/example-ignite.xml")) {
+      CacheConfiguration<Integer, String> cfg = new CacheConfiguration<>();
+      cfg.setName("Democache");
+      cfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
 
-    // Store keys in cache.
-    for (int i = 0; i < 10; i++)
-      cache.put(i, Integer.toString(i));
+      IgniteCache<Integer, String> cache = ignite.getOrCreateCache(cfg);
 
-    // Retrieve values from cache.
-    for (int i = 0; i < 10; i++)
-      System.out.println("Got [key=" + i + ", val=" + cache.get(i) + ']');
+      cache.put(1, "cache item 1");
+      cache.put(2, "cache item 2");
 
-    // Remove objects from cache.
-    for (int i = 0; i < 10; i++)
-      cache.remove(i);
+      System.out.println(cache.get(1));
+      System.out.println(cache.get(2));
+    }
+  }
 
-    // Atomic put-if-absent.
-    cache.putIfAbsent(1, "1");
+  public DBService(int nodesCount) {
+    //TODO: start apache ignite nodes
+  }
 
-    // Atomic replace.
-    cache.replace(1, "1", "2");
+  public void shutdown() {
+    //TODO: stop apache ignite nodes
   }
 }
