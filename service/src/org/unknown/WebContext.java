@@ -2,8 +2,10 @@ package org.unknown;
 
 import org.apache.commons.configuration2.Configuration;
 import org.unknown.services.Services;
+import org.unknown.services.db.DBService;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 
 /**
@@ -28,6 +30,11 @@ public class WebContext {
 
   public static Services getServices() {
     return services;
+  }
+
+  @Produces
+  public DBService getDBService() {
+    return services.getDbService();
   }
 
 }

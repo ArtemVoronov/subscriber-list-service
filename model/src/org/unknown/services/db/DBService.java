@@ -11,30 +11,29 @@ import org.apache.ignite.configuration.CacheConfiguration;
  */
 public class DBService {
 
-  //TODO: clean
-  public static void main(String[] args) {
-    Ignition.setClientMode(true);
+  //TODO: clean and add cached for model entities
+  private static final String CACHE_NAME = "Democache";
+  private final IgniteCache<Integer, String> cache;
 
-    try(Ignite ignite = Ignition.start("org/unknown/services/db/example-ignite.xml")) {
-      CacheConfiguration<Integer, String> cfg = new CacheConfiguration<>();
-      cfg.setName("Democache");
-      cfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+  public DBService() {
+    Ignite ignite = Ignition.start("org/unknown/services/db/example-ignite.xml");
 
-      IgniteCache<Integer, String> cache = ignite.getOrCreateCache(cfg);
+    CacheConfiguration<Integer, String> cfg = new CacheConfiguration<>();
+    cfg.setName(CACHE_NAME);
+    cfg.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
 
-      cache.put(1, "cache item 1");
-      cache.put(2, "cache item 2");
-
-      System.out.println(cache.get(1));
-      System.out.println(cache.get(2));
-    }
+    cache = ignite.getOrCreateCache(cfg);
   }
 
-  public DBService(int nodesCount) {
-    //TODO: start apache ignite nodes
+  public void addCacheItem(Integer key, String value) {
+    cache.put(key, value);
+  }
+
+  public String getCacheItem(Integer key) {
+    return cache.get(key);
   }
 
   public void shutdown() {
-    //TODO: stop apache ignite nodes
+    Ignition.stopAll(false);
   }
 }

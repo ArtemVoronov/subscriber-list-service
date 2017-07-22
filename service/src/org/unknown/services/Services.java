@@ -8,17 +8,21 @@ public class Services {
   private final DBService dbService;
 
   public Services(Configuration config) throws ServicesException {
-    this.dbService = initDBService(config);
+    this.dbService = initDBService();
   }
 
-  private DBService initDBService(Configuration config) throws ServicesException {
+  private DBService initDBService() throws ServicesException {
     try {
-      int nodesCount =  config.getInt("nodes.count");
-      return new DBService(nodesCount);
+      return new DBService();
     } catch(Exception e) {
       throw new ServicesException("Error during DBService initialization.", e);
     }
   }
+
+  public DBService getDbService() {
+    return dbService;
+  }
+
   public void shutdown() {
     dbService.shutdown();
   }
