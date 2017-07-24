@@ -2,40 +2,21 @@ package org.unknown.services.db;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
+import org.apache.ignite.IgniteSet;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.transactions.Transaction;
-import org.unknown.model.Cell;
-import org.unknown.model.Msisdn;
-import org.unknown.model.Profile;
-
-import java.util.Set;
 
 /**
  * Author: Artem Voronov
  */
 public class DBService {
 
-  private final IgniteCache<Integer, Cell> cells;
-  private final IgniteCache<Cell, Set<Msisdn>> msisdns;
-  private final IgniteCache<Msisdn, Profile> profiles;
+  private final Ignite ignite;
 
   public DBService() {
-    Ignite ignite = Ignition.start("org/unknown/services/db/example-ignite.xml");
-
-    //TODO: отделить кэши от службы; getCell, addCell убрать в другое место
-    CacheConfiguration<Integer, Cell> cellsCacheConfig = new CacheConfiguration<>("CELLS");
-    CacheConfiguration<Cell, Set<Msisdn>> phonesCacheConfig = new CacheConfiguration<>("MSISDNS");
-    CacheConfiguration<Msisdn, Profile> profilesCacheConfig = new CacheConfiguration<>("PROFILES");
-
-    cellsCacheConfig.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
-    phonesCacheConfig.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
-    profilesCacheConfig.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
-
-    cells = ignite.getOrCreateCache(cellsCacheConfig);
-    msisdns = ignite.getOrCreateCache(phonesCacheConfig);
-    profiles = ignite.getOrCreateCache(profilesCacheConfig);
+    ignite = Ignition.start("org/unknown/services/db/example-ignite.xml");
   }
 
   public <T> T tx(DBAction<T> action) {
@@ -54,11 +35,10 @@ public class DBService {
     }
   }
 
-  public Cell getCell(Integer cellId) {
-    return tx(() -> cells.get(cellId));
-  }
-  public void addCell(Cell cell) {
-    vtx(() -> cells.put(cell.getCellId(), cell));
+  public <K, V> IgniteCache<K, V> getOrCreateCache(String cacheName){
+    CacheConfiguration<K, V> cellsCacheConfig = new CacheConfiguration<>(cacheName);
+    cellsCacheConfig.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+    return ignite.getOrCreateCache(cellsCacheConfig);
   }
 
   public void shutdown() {

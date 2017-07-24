@@ -1,19 +1,30 @@
-package org.unknown.model;
-
-import java.io.Serializable;
+package org.unknown.web.controllers.subscriber.model;
 
 /**
  * Author: Artem Voronov
  */
-public class Profile implements Serializable {
+public class SubscriberProfile {
+  private int ctn;
   private String name;
   private String email;
-  private String activateDate;
+  private String activateDate; //formatted as 2017-02-24 12:45:00
 
-  public Profile(String name, String email, String activateDate) {
+  public SubscriberProfile() {
+  }
+
+  public SubscriberProfile(int ctn, String name, String email, String activateDate) {
+    this.ctn = ctn;
     this.name = name;
     this.email = email;
     this.activateDate = activateDate;
+  }
+
+  public int getCtn() {
+    return ctn;
+  }
+
+  public void setCtn(int ctn) {
+    this.ctn = ctn;
   }
 
   public String getName() {

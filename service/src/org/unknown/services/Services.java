@@ -2,13 +2,16 @@ package org.unknown.services;
 
 import org.apache.commons.configuration2.Configuration;
 import org.unknown.services.db.DBService;
+import org.unknown.services.subscriber.SubscriberService;
 
 public class Services {
 
   private final DBService dbService;
+  private final SubscriberService subscriberService;
 
   public Services(Configuration config) throws ServicesException {
     this.dbService = initDBService();
+    this.subscriberService = new SubscriberService(dbService);
   }
 
   private DBService initDBService() throws ServicesException {
@@ -21,6 +24,10 @@ public class Services {
 
   public DBService getDbService() {
     return dbService;
+  }
+
+  public SubscriberService getSubscriberService() {
+    return subscriberService;
   }
 
   public void shutdown() {

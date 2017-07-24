@@ -4,6 +4,7 @@ import org.apache.commons.configuration2.Configuration;
 import org.unknown.services.Service;
 import org.unknown.services.Services;
 import org.unknown.services.db.DBService;
+import org.unknown.services.subscriber.SubscriberService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
@@ -36,6 +37,11 @@ public class WebContext {
   @Produces @Service
   public DBService getDBService() {
     return services.getDbService();
+  }
+
+  @Produces @Service
+  public SubscriberService getSubscriberService() {
+    return services.getSubscriberService();
   }
 
 }
