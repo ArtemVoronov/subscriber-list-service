@@ -51,9 +51,8 @@ public class SubscriberListController {
     try {
       checkSubscriberProfile(subscriberProfile);
 
-      Msisdn msisdn = new Msisdn(subscriberProfile.getCtn());
       Profile profile = new Profile(subscriberProfile.getName(), subscriberProfile.getEmail(), subscriberProfile.getActivateDate());
-      subscriberService.createProfile(msisdn, profile);
+      subscriberService.createProfile(subscriberProfile.getCtn(), profile);
       return Response.ok().build();
     } catch (IllegalArgumentException ex) {
       return Response.ok("{error:\"" + ex.getMessage() + "\"}",  MediaType.APPLICATION_JSON_TYPE).build();//TODO: ckech error json response
@@ -66,8 +65,7 @@ public class SubscriberListController {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/profile")
   public Profile createProfile(@QueryParam("ctn") Integer ctn, @Context SecurityContext ctx) {
-    Msisdn msisdn = new Msisdn(ctn);
-    return subscriberService.getProfile(msisdn);
+    return subscriberService.getProfile(ctn);
   }
 
   @POST
@@ -77,9 +75,8 @@ public class SubscriberListController {
   public Response createMsisdn(CellPhone cellPhone, @Context SecurityContext ctx) {
     try {
       checkCellPhone(cellPhone);
-      Cell cell = new Cell(cellPhone.getCellId());
-      Msisdn msisdn = new Msisdn(cellPhone.getCtn());
-      subscriberService.createMsisdn(cell, msisdn);
+      Msisdn msisdn = new Msisdn(cellPhone.getCtn(), cellPhone.getCellId());
+      subscriberService.createMsisdn(msisdn);
       return Response.ok().build();
     } catch (IllegalArgumentException ex) {
       return Response.ok("{error:\"" + ex.getMessage() + "\"}",  MediaType.APPLICATION_JSON_TYPE).build();//TODO: ckech error json response
@@ -99,7 +96,7 @@ public class SubscriberListController {
       Set<Msisdn> msisdnSet = subscriberService.getMsisdns(new Cell(cellId));
       List<SubscriberProfile> profiles = new ArrayList<>(msisdnSet.size());
       for (Msisdn msisdn : msisdnSet) {
-        Profile profile = subscriberService.getProfile(msisdn);
+        Profile profile = subscriberService.getProfile(msisdn.getCtn());
         profiles.add(new SubscriberProfile(msisdn.getCtn(), profile.getName(), profile.getEmail(), profile.getActivateDate()));
       }
 

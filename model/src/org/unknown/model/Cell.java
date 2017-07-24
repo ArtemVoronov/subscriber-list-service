@@ -1,37 +1,26 @@
 package org.unknown.model;
 
+import org.apache.ignite.cache.query.annotations.QuerySqlField;
+
 import java.io.Serializable;
 
 /**
  * Author: Artem Voronov
  */
 public class Cell implements Serializable {
-  private int id;
+  @QuerySqlField(index = true)
+  private Integer id;
 
-  public Cell(int id) {
+  public Cell(Integer id) {
     this.id = id;
   }
 
-  public int getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    Cell cell = (Cell) o;
-
-    return id == cell.id;
-  }
-
-  @Override
-  public int hashCode() {
-    return id;
-  }
 }
