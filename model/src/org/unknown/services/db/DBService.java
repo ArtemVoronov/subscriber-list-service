@@ -35,16 +35,19 @@ public class DBService {
     }
   }
 
+  public <K, V> IgniteCache<K, V> getOrCreateCache(String cacheName, Class indexTypeKey, Class indexTypeValue){
+    CacheConfiguration<K, V> cacheConfig = new CacheConfiguration<>(cacheName);
+    cacheConfig.setCacheMode(CacheMode.PARTITIONED);
+    cacheConfig.setIndexedTypes(indexTypeKey, indexTypeValue);
+    cacheConfig.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
+    return ignite.getOrCreateCache(cacheConfig);
+  }
+
   public <K, V> IgniteCache<K, V> getOrCreateCache(String cacheName){
     CacheConfiguration<K, V> cacheConfig = new CacheConfiguration<>(cacheName);
     cacheConfig.setCacheMode(CacheMode.PARTITIONED);
     cacheConfig.setAtomicityMode(CacheAtomicityMode.TRANSACTIONAL);
     return ignite.getOrCreateCache(cacheConfig);
-  }
-
-  //TODO
-  public Ignite getIgnite() {
-    return ignite;
   }
 
   public void shutdown() {
