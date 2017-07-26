@@ -24,7 +24,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -53,19 +52,11 @@ public class SubscriberListController {
 
       Profile profile = new Profile(subscriberProfile.getName(), subscriberProfile.getEmail(), subscriberProfile.getActivateDate());
       subscriberService.createProfile(subscriberProfile.getCtn(), profile);
-      return Response.ok().build();
-    } catch (IllegalArgumentException ex) {
-      return Response.ok("{error:\"" + ex.getMessage() + "\"}",  MediaType.APPLICATION_JSON_TYPE).build();//TODO: ckech error json response
-    } catch (Exception ex) {
-      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-    }
-  }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("/profile")
-  public Profile createProfile(@QueryParam("ctn") Integer ctn, @Context SecurityContext ctx) {
-    return subscriberService.getProfile(ctn);
+      return Response.ok("{\"ok\":true}", MediaType.APPLICATION_JSON).build();
+    } catch (Exception ex) {
+      throw new WebApplicationException(error(ex.getMessage()));
+    }
   }
 
   @POST
@@ -75,13 +66,12 @@ public class SubscriberListController {
   public Response createMsisdn(CellPhone cellPhone, @Context SecurityContext ctx) {
     try {
       checkCellPhone(cellPhone);
-      Msisdn msisdn = new Msisdn(cellPhone.getCtn(), cellPhone.getCellId());
-      subscriberService.createMsisdn(msisdn);
-      return Response.ok().build();
-    } catch (IllegalArgumentException ex) {
-      return Response.ok("{error:\"" + ex.getMessage() + "\"}",  MediaType.APPLICATION_JSON_TYPE).build();//TODO: ckech error json response
+
+      subscriberService.createMsisdn(new Msisdn(cellPhone.getCtn(), cellPhone.getCellId()));
+
+      return Response.ok("{\"ok\":true}", MediaType.APPLICATION_JSON).build();
     } catch (Exception ex) {
-      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+      throw new WebApplicationException(error(ex.getMessage()));
     }
   }
 
@@ -102,8 +92,14 @@ public class SubscriberListController {
 
       return new SubscriberList(profiles);
     } catch (Exception ex) {
-      throw new WebApplicationException(Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN_TYPE).entity("UNKNOWN").build());
+      throw new WebApplicationException(error(ex.getMessage()));
     }
+  }
+
+  private static Response error(String errorMessage) {
+    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.APPLICATION_JSON_TYPE)
+        .entity("{\"ok\":false, \"error\":\"" + errorMessage + "\"}")
+        .build();
   }
 
   private static void checkSubscriberProfile(SubscriberProfile profile) {
