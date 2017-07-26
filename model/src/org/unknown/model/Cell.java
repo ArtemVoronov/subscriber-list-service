@@ -11,6 +11,9 @@ public class Cell implements Serializable {
   @QuerySqlField(index = true)
   private Integer id;
 
+  public Cell() {
+  }
+
   public Cell(Integer id) {
     this.id = id;
   }

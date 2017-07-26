@@ -17,6 +17,9 @@ public class Msisdn implements Serializable {
 
   private transient AffinityKey<Integer> key;
 
+  public Msisdn() {
+  }
+
   public Msisdn(Integer ctn, Integer cellId) {
     this.ctn = ctn;
     this.cellId = cellId;

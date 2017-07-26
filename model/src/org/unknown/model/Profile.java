@@ -10,6 +10,9 @@ public class Profile implements Serializable {
   private String email;
   private String activateDate;
 
+  public Profile() {
+  }
+
   public Profile(String name, String email, String activateDate) {
     this.name = name;
     this.email = email;

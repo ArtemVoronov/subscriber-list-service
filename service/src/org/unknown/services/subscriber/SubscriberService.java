@@ -42,11 +42,11 @@ public class SubscriberService {
     });
   }
 
-  public Set<Msisdn> getMsisdns(Cell cell) {
+  public List<Msisdn> getMsisdns(Cell cell) {
     return db.tx(() -> {
       String joinSql = "from Msisdn, \"CELLS\".Cell as c where Msisdn.cellId = c.id and c.id = ?";
       List<Cache.Entry<AffinityKey<Integer>, Msisdn>> list = collocated.query(new SqlQuery<AffinityKey<Integer>, Msisdn>(Msisdn.class, joinSql).setArgs(cell.getId())).getAll();
-      return list.stream().map(Cache.Entry::getValue).collect(Collectors.toSet());
+      return list.stream().map(Cache.Entry::getValue).collect(Collectors.toList());
     });
   }
 

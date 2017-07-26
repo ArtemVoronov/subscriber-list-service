@@ -93,9 +93,9 @@ public class SubscriberListController {
       if (cellId == null || cellId < 0)
         throw new IllegalArgumentException("Wrong 'cellId' value");
 
-      Set<Msisdn> msisdnSet = subscriberService.getMsisdns(new Cell(cellId));
-      List<SubscriberProfile> profiles = new ArrayList<>(msisdnSet.size());
-      for (Msisdn msisdn : msisdnSet) {
+      List<Msisdn> msisdns = subscriberService.getMsisdns(new Cell(cellId));
+      List<SubscriberProfile> profiles = new ArrayList<>(msisdns.size());
+      for (Msisdn msisdn : msisdns) {
         Profile profile = subscriberService.getProfile(msisdn.getCtn());
         profiles.add(new SubscriberProfile(msisdn.getCtn(), profile.getName(), profile.getEmail(), profile.getActivateDate()));
       }
