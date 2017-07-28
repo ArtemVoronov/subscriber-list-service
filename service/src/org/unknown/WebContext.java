@@ -1,6 +1,5 @@
 package org.unknown;
 
-import org.apache.commons.configuration2.Configuration;
 import org.unknown.services.Service;
 import org.unknown.services.Services;
 import org.unknown.services.db.DBService;
@@ -19,9 +18,9 @@ public class WebContext {
 
   private static Services services;
 
-  static synchronized void init(Configuration config) throws Exception {
+  static synchronized void init() throws Exception {
     if (WebContext.services == null) {
-      WebContext.services = new Services(config);
+      WebContext.services = new Services();
     }
   }
 

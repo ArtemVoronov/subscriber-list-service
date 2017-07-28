@@ -1,6 +1,5 @@
 package org.unknown.services;
 
-import org.apache.commons.configuration2.Configuration;
 import org.unknown.services.db.DBService;
 import org.unknown.services.subscriber.SubscriberService;
 
@@ -9,7 +8,7 @@ public class Services {
   private final DBService dbService;
   private final SubscriberService subscriberService;
 
-  public Services(Configuration config) throws ServicesException {
+  public Services() throws ServicesException {
     this.dbService = initDBService();
     this.subscriberService = new SubscriberService(dbService);
   }

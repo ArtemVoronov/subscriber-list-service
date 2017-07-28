@@ -1,7 +1,5 @@
 package org.unknown.web.controllers.subscriber;
 
-import groovy.transform.CompileStatic;
-import groovy.util.logging.Log4j;
 import org.unknown.model.Cell;
 import org.unknown.model.Msisdn;
 import org.unknown.model.Profile;
@@ -31,9 +29,7 @@ import java.util.regex.Pattern;
  */
 @Named
 @Path("/")
-@CompileStatic
 @RequestScoped
-@Log4j("logger")
 public class SubscriberListController {
 
   private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
